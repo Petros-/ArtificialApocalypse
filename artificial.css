@@ -1,0 +1,72 @@
+body {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+    gap: 20px 20px;
+    background-color: grey;
+}
+
+#gameboard-container {
+    height: 960px;
+    width: 1440px;
+    display: flex;
+    background-color: blue;
+    position: relative;
+}
+
+#overlay, #gameBoard {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#overlay {
+    z-index: 10;
+    border: 1px solid red;
+    
+}
+
+#gameBoard {
+    border: 1px solid red; 
+}
+
+.gameBoard div {
+    border: 1px solid black;
+}
+
+.topLine {
+    display: flex;
+    /* background-color: cyan; */
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.elapsedTime, .points {
+    padding: 4px 20px;
+}
+
+.elapsedTime {
+    background-color: magenta;
+
+}
+
+.points {
+    background-color: yellow;
+    
+}
+
+.middle {
+    background-color: greenyellow;
+
+}
+
+.protagonist {
+    background-color: lightgreen;
+    position:absolute;
+    left:0px;
+    bottom: 0px;
+}
