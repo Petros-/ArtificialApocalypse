@@ -111,6 +111,8 @@ function spawn(enemy) {
     enemyImg.style.top = '0px';    
     enemyImg.style.left = xPosition;
     enemyImg.classList.add('enemigo');
+    enemyImg.dataset.bounty = enemy.bounty;
+    
 
     // Append the img to the game board
     gameBoard.appendChild(enemyImg);
@@ -202,8 +204,11 @@ function shoot(shooter) {
                 console.log('Hit:', enemy.alt);
 
                 // increment the score upwards
-                score = score + enemy.bounty;
-                console.log(enemy.bounty); // this is returning undefined
+                score = score + parseInt(enemy.dataset.bounty);
+                console.log(score);
+
+                // control the score from here
+                scoreHolder.textContent = score;
 
                 projectile.remove();
                 enemy.remove();
@@ -237,6 +242,5 @@ const spawnInterval = setInterval (() => {
 
 
 
-// control the score from here
-scoreHolder.innerText = score + ` pts | Top score: 100,000`;
+
 
