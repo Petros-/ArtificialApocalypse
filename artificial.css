@@ -99,3 +99,7 @@ button {
     position: absolute;
     border-radius: 4px;
 }
+
+.hidden {
+    display: none;
+}

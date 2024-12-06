@@ -6,10 +6,33 @@ const gameBoard = document.getElementById("gameBoard");
 const pro = document.getElementById('protagonist');
 const bull = document.getElementsByClassName('bullet');
 const scoreHolder = document.getElementById('score');
+const beginButton = document.getElementById('begin');
+const endButton = document.getElementById('endGame');
 
 // don't start the game until the start button is pressed
+let gameGo = false;
+beginButton.addEventListener('click', function() {
 
-// pause the game if the pause button is pressed
+    // set the game to start
+    gameGo = !gameGo;
+
+    // create a toggle that changes what buttons say and do
+    if (!gameGo) {
+
+        // pause the game if the pause button is pressed
+        endButton.classList.remove('hidden');
+        beginButton.textContent = 'Resume';
+    } else {
+        endButton.classList.add('hidden');
+        beginButton.textContent = 'Pause';
+    }
+    
+    console.log('Should the game go?' + gameGo);
+});
+
+
+
+
 
 // end the game if protagonist dies or if no further enemies exist
 
@@ -100,28 +123,29 @@ document.addEventListener('DOMContentLoaded', () => {
 // create a function to spawn an individual enemy
 function spawn(enemy) {
 
-    // pick a slot at random and put the spawn location there
-    const xPosition = slots[Math.floor(Math.random() * slots.length)] + 'px';
+    // only spawn and move if the game is not paused
+    if (gameGo) {
 
-    // Create an img element dynamically
-    const enemyImg = document.createElement("img");
-    enemyImg.src = enemy.image;
-    enemyImg.alt = enemy.name;
-    enemyImg.style.position = 'absolute';
-    enemyImg.style.top = '0px';    
-    enemyImg.style.left = xPosition;
-    enemyImg.classList.add('enemigo');
-    enemyImg.dataset.bounty = enemy.bounty;
-    
-
-    // Append the img to the game board
-    gameBoard.appendChild(enemyImg);
-
-    // make the image move downwards
-    moveDown(enemyImg, enemy);
-
-    // troubleshooting points incrementation
-    // console.log(enemy.bounty);
+        // pick a slot at random and put the spawn location there
+        const xPosition = slots[Math.floor(Math.random() * slots.length)] + 'px';
+        
+        // Create an img element dynamically
+        const enemyImg = document.createElement("img");
+        enemyImg.src = enemy.image;
+        enemyImg.alt = enemy.name;
+        enemyImg.style.position = 'absolute';
+        enemyImg.style.top = '0px';    
+        enemyImg.style.left = xPosition;
+        enemyImg.classList.add('enemigo');
+        enemyImg.dataset.bounty = enemy.bounty;
+        
+        
+        // Append the img to the game board
+        gameBoard.appendChild(enemyImg);
+        
+        // make the image move downwards
+        moveDown(enemyImg, enemy);
+    }
 
 };
 
@@ -131,8 +155,13 @@ function moveDown(element, enemy) {
 
     // Move the element down by some amount every 50ms
     const moveInterval = setInterval(() => {
-        yPosition += enemy.speed;
-        element.style.top = yPosition + 'px';
+        if (!gameGo) {
+            return;
+        } else {
+            yPosition += enemy.speed;
+            element.style.top = yPosition + 'px';
+        }
+
         const gameBoardHeight = gameBoard.offsetHeight;
         if (yPosition > gameBoardHeight - element.offsetHeight) {
             clearInterval(moveInterval);
@@ -205,9 +234,9 @@ function shoot(shooter) {
 
                 // increment the score upwards
                 score = score + parseInt(enemy.dataset.bounty);
-                console.log(score);
+                // console.log(score);
 
-                // control the score from here
+                // update the score onscreen
                 scoreHolder.textContent = score;
 
                 projectile.remove();
@@ -227,12 +256,18 @@ const maximumEnemigos = 5;
 
 // spawn a new enemy every so often
 const spawnInterval = setInterval (() => {
-    if (enemyCount < maximumEnemigos) {
 
+    // only spawn if there aren't too many enemies already
+    // and if the game is not paused
+    if (!gameGo) {
+        return;
+
+    } else if ((enemyCount < maximumEnemigos) && gameGo){
         spawn(enemyNo1);
         enemyCount = enemyCount + 1;
         console.log(`Enemy count: ${enemyCount}`);
     } else {
+        
         // stop spawning once interval is reached
         clearInterval(spawnInterval);
         console.log("Maximum enemigos reached.")
