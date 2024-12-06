@@ -6,11 +6,15 @@ body {
     width: 100%;
     gap: 20px 20px;
     background-color: grey;
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 #gameboard-container {
-    height: 960px;
-    width: 1440px;
+    height: 640px;
+    width: 1024px;
     display: flex;
     background-color: blue;
     position: relative;
@@ -43,10 +47,16 @@ body {
     /* background-color: cyan; */
     flex-direction: row;
     justify-content: space-between;
+    align-content: stretch;
+    gap: 0;
+}
+
+.elapsedTime, .points, .middle {
+    padding: 4px 20px;
 }
 
 .elapsedTime, .points {
-    padding: 4px 20px;
+    flex: 0 0 auto;
 }
 
 .elapsedTime {
@@ -61,12 +71,31 @@ body {
 
 .middle {
     background-color: greenyellow;
-
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: stretch;
+    gap: 12px;
+    flex: 1;
 }
 
-.protagonist {
+button {
+    padding: 12px;
+}
+
+#protagonist {
     background-color: lightgreen;
     position:absolute;
-    left:0px;
+    height: 84px;
+    width: 156px;
+    left:200px;
     bottom: 0px;
+}
+
+.bullet {
+    height: 12px;
+    width: 12px;
+    background-color: red;
+    position: absolute;
+    border-radius: 4px;
 }

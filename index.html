@@ -1,6 +1,9 @@
 <html>
     <head>
         <title>Artificial Apocalypto</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="artificial.css">
     </head>
     <body>
@@ -8,15 +11,19 @@
             <div id="overlay">
                 <div class="topLine">
                     <div class="elapsedTime">
-                        <p>1:45</p>
+                        <p>Time 1:45</p>
+                    </div>
+                    <div class="middle">
+                        <p>Avoid the onslaught. Use &larr; &rarr; and spacebar to survive.</p>
+                        <button>Begin</button>
                     </div>
                     <div class="points">
-                        <p>123,200 | Top score: 400,410</p>
+                        <p id="score">123,200 | Top score: 400,410</p>
                     </div>
                 </div>
             </div>
-            <div id="gameBoard"></div>
-                <div class="protagonist"><img src="images/Protagonist1.png"></div>
+            <div id="gameBoard">
+                <div id="protagonist"><img src="images/Protagonist1.png"></div>
             </div>
         </div>
         <script src="artificial.js"></script>
