@@ -28,8 +28,16 @@ let gameGo = false;
 
 let proObject = {
     health: 2
-}
+};
 
+// create a session object to store game scores locally
+class Session {
+    constructor(nameOfPlayer, gameEndTime, gameEndScore) {
+        this.nameOfPlayer = nameOfPlayer;
+        this.gameEndTime = gameEndTime;
+        this.score = gameEndScore;
+    }
+};
 
 
 // start the game at the press of the button
@@ -99,6 +107,7 @@ function endGame() {
     console.log('The game ended.');
 
     // need to write to local storage here
+    localStorage.setItem('some key', 'some changed value');
 
 };
 
