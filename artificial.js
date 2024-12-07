@@ -11,7 +11,7 @@ const pauseButton = document.getElementById('pause');
 const endButton = document.getElementById('endGame');
 const modal = document.getElementById('modal');
 const modalContents = document.getElementById('modal-contents');
-const tryAgain = document.getElementById('try-again');
+
 
 // don't start the game until the start button is pressed
 let gameGo = false;
@@ -21,6 +21,8 @@ function endGame() {
     gameGo = false;
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
+
+    // need to write to local storage here
 };
 
 // start the game at the press of the button
@@ -67,7 +69,26 @@ endButton.addEventListener('click', function() {
     <button id="try-again">Try again</button>
     `;
 
-})
+    const tryAgain = document.getElementById('try-again');
+    tryAgain.addEventListener('click', function() {
+        enemyCount = 0;
+        score = 0;
+        gameGo = true;
+        // timer would need to be reset too
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+
+        // get rid of the existing enemies
+        const existingEnemies = document.querySelectorAll('.enemigo');
+        existingEnemies.forEach(enemy => enemy.remove());
+
+        // reset the score display
+        scoreHolder.textContent = score;
+    });
+
+});
+
+
 
 
 // end the game if protagonist dies or if no further enemies exist
