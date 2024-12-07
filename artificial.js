@@ -32,6 +32,21 @@ let proObject = {
     health: 2
 };
 
+// verify that there is a player name
+const validatePlayerName = (name) => {
+    const errElement = name.nextElementSibling;
+    const regex = /^(?! +$).+$/;
+    if (regex.test(name.value.trim())) {
+        name.parentElement.classList.remove('invalid');
+        errElement.classList.add('hidden');
+        return true;
+    } else {
+        name.parentElement.classList.add('invalid');
+        errElement.classList.remove('hidden');
+        return false;
+    }
+    
+};
 
 // start the game at the press of the button
 beginButton.addEventListener('click', function(event) {
@@ -39,17 +54,22 @@ beginButton.addEventListener('click', function(event) {
     // Prevent form submission (refresh)
     event.preventDefault();
 
-    // close the modal
-    modal.classList.add('hidden');
+    if (validatePlayerName(playerName)) {
 
-    // set the game to start
-    gameGo = !gameGo;
-
-    // start spawning enemies
-    startSpawningEnemies();
+        // close the modal
+        modal.classList.add('hidden');
     
-    console.log('Should the game go? ' + gameGo);
-    console.log(modal.classList);
+        // set the game to start
+        gameGo = !gameGo;
+    
+        // start spawning enemies
+        startSpawningEnemies();
+        
+        console.log('Should the game go? ' + gameGo);
+        console.log(modal.classList);
+    } else {
+        alert('Please enter a valid player name including any characters you want. Just don\'t leave it blank');
+    }
 });
 
 pauseButton.addEventListener('click', function() {

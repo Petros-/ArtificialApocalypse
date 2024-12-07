@@ -50,6 +50,7 @@ body {
     align-content: stretch;
     align-items: stretch;
     gap: 0;
+    height: 60px;
 }
 
 .elapsedTime, .points, .middle, .player-name-display {
@@ -59,12 +60,14 @@ body {
 
 .elapsedTime, .points, .player-name-display  {
     flex: 0 0 auto;
-}
-
-.elapsedTime, .player-name-display  {
+    min-width: 180px;
     display:flex;
     justify-content: center;
     align-items: center;
+}
+
+.elapsedTime, .player-name-display  {
+    
     background-color: magenta;
     /* padding: 4px 20px; */
 }
@@ -84,8 +87,17 @@ body {
     flex: 1;
 }
 
+.middle, .narrower {
+    /* max-width: 260px; */
+    word-wrap: break-word;
+    /* text-align: center; */
+}
+
 button {
     padding: 12px;
+    height: auto;
+    flex-shrink: 0;
+    align-self: center;
 }
 
 #protagonist {
@@ -141,6 +153,11 @@ button {
 
 .form-group {
     padding: 40px;
+}
+
+.invalid {
+    border: 1px solid red;
+    color: red;
 }
 
 .hidden {
