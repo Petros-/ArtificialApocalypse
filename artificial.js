@@ -130,6 +130,35 @@ function endGame() {
     // change what the modal says
     modalContents.innerHTML = endGameModalText;
 
+    // grab the try again button
+    const tryAgain = document.getElementById('try-again');
+
+    // what to do if try again gets clicked
+    tryAgain.addEventListener('click', function() {
+        enemyCount = 0;
+        score = 0;
+        gameGo = true;
+        // timer would need to be reset too
+
+        // put away the modal
+        modal.classList.add('hidden');
+
+        // change the buttons back
+        endButton.classList.add('hidden');
+        pauseButton.textContent = 'Pause';
+
+        // get rid of the existing enemies
+        const existingEnemies = document.querySelectorAll('.enemigo');
+        existingEnemies.forEach(enemy => enemy.remove());
+
+        // reset the score display
+        scoreHolder.textContent = score;
+
+        // start spawning enemies again
+        startSpawningEnemies();
+        
+    });
+
     // open the dialog
     modal.classList.remove('hidden');
 
@@ -191,34 +220,7 @@ endButton.addEventListener('click', function() {
     modalContents.innerHTML = endGameModalText;
 
 
-    // grab the try again button
-    const tryAgain = document.getElementById('try-again');
-
-    // what to do if try again gets clicked
-    tryAgain.addEventListener('click', function() {
-        enemyCount = 0;
-        score = 0;
-        gameGo = true;
-        // timer would need to be reset too
-
-        // put away the modal
-        modal.classList.add('hidden');
-
-        // change the buttons back
-        endButton.classList.add('hidden');
-        pauseButton.textContent = 'Pause';
-
-        // get rid of the existing enemies
-        const existingEnemies = document.querySelectorAll('.enemigo');
-        existingEnemies.forEach(enemy => enemy.remove());
-
-        // reset the score display
-        scoreHolder.textContent = score;
-
-        // start spawning enemies again
-        startSpawningEnemies();
-        
-    });
+    
 
 });
 
