@@ -54,6 +54,9 @@ beginButton.addEventListener('click', function(event) {
     // Prevent form submission (refresh)
     event.preventDefault();
 
+    // prevent protagonist jumping
+    pro.style.left = "400px";
+
     if (validatePlayerName(playerName)) {
 
         // close the modal
@@ -93,6 +96,18 @@ pauseButton.addEventListener('click', function() {
 
     // console.log('Game is running? ', gameGo);
 
+});
+
+// try to make this key press thing smoother with request animation frame
+// create an empty object to track any active key presses
+const keysPressed = {};
+
+// Listen for key presses
+document.addEventListener('keydown', (event) => {
+    keysPressed[event.key] = true;
+});
+document.addEventListener('keyup', (event) => {
+    keysPressed[event.key] = false;
 });
 
 // define a variable for score and set it to zero
@@ -138,7 +153,9 @@ function endGame() {
         enemyCount = 0;
         score = 0;
         gameGo = true;
-        // timer would need to be reset too
+        
+        // prevent protagonist jumping
+        pro.style.left = "400px";
 
         // put away the modal
         modal.classList.add('hidden');
@@ -219,9 +236,6 @@ endButton.addEventListener('click', function() {
     // change what the modal says
     modalContents.innerHTML = endGameModalText;
 
-
-    
-
 });
 
 // create a class for enemies
@@ -266,45 +280,60 @@ const slots = [
     slotIncrement * 5 + slotIncrement 
 ];
 
+
+
+// how many pixels per frame to move objects
+const movementSpeed = 5;
+
+function moveProtagonist () {
+
+    // get the current position of the protagonist
+    // this value is getting set in two places (css, here)
+    // fix it later
+    let proLeft = parseInt(pro.style.left) || 0;
+
+    // get boundaries
+    const gameBoardWidth = gameBoard.offsetWidth;
+    const proWidth = pro.offsetWidth;
+
+    // move left
+    if (keysPressed['ArrowLeft']) {
+        proLeft -= movementSpeed;
+    }
+
+    // move right
+    if (keysPressed['ArrowRight']) {
+        proLeft += movementSpeed;
+    }
+
+    // clamp the values so the protagonist stays on screen
+    proLeft = Math.max(0, Math.min(proLeft, gameBoardWidth - proWidth));
+
+    // format the values correctly and apply to the protagonist
+    pro.style.left = `${proLeft}px`;
+
+    // Continue the loop
+    requestAnimationFrame(moveProtagonist);
+};
+
+moveProtagonist();
+
+// old
 // define what should happen on various keypresses
-document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('keydown', (event) => {
-
-        // check to see if it's working
-        // console.log('A key was pressed');
-
-        // get the current position of the protagonist
-        // this value is getting set in two places (css, here)
-        // fix it later
-        let proLeft = parseInt(pro.style.left) || 200;
-
-        // get boundaries
-        const gameBoardWidth = gameBoard.offsetWidth;
-        const proWidth = pro.offsetWidth;
-        
-        // set conditions for what to do for which keys
-        switch (event.key) {
-            case 'ArrowLeft':
-                proLeft -= 20;
-                break;
-            case 'ArrowRight':
-                proLeft += 20;
-                break;
-            case ' ':
-                shoot(pro);
-                console.log('shots fired!')
-                break;
-            default:
-                break;
-        }
-        
-        // clamp the values so the protagonist stays on screen
-        proLeft = Math.max(0, Math.min(proLeft, gameBoardWidth - proWidth));
-
-        // format the values correctly and apply to the protagonist
-        pro.style.left = proLeft + 'px';
-    });
+document.addEventListener('keydown', (event) => {
+    
+    // set conditions for what to do for which keys
+    switch (event.key) {
+        case ' ':
+            shoot(pro);
+            console.log('shots fired!')
+            break;
+        default:
+            break;
+    }
+    
 });
+
 
 // create a function to spawn an individual enemy
 function spawn(enemy) {
