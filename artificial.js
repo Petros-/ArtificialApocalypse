@@ -26,6 +26,7 @@ playerNameDisplay.textContent = playerName.value;
 // don't start the game until the start button is pressed
 let gameGo = false;
 
+// develop this to use the protagonist getting hit to end the game
 let proObject = {
     health: 2
 };
@@ -75,7 +76,7 @@ pauseButton.addEventListener('click', function() {
 
 });
 
-// set the score to zero
+// define a variable for score and set it to zero
 let score = 0;
 
 // create a session object to store game scores locally
@@ -90,9 +91,11 @@ class GameSession {
 // define the contents of the end game modal
 const endGameModalText = `
     <h1>You now report to a robot.</h1>
-    <p>Your score: ${score}</p>
+    
     <button id="try-again">Try again</button>
     `;
+
+    // <p>Your score: ${score}</p>
 
 // create a function to end the game
 function endGame() {
@@ -131,6 +134,7 @@ function endGame() {
 
         // and update local storage with the new array
         localStorage.setItem('Games played', JSON.stringify(gamesList));
+
     } else {
 
         // local storage is empty
@@ -454,6 +458,8 @@ function startSpawningEnemies() {
         }
     }, 2000);
 };
+
+
 
 // if the protagonist health reaches zero end the game
 if (proObject.health === 0) {
