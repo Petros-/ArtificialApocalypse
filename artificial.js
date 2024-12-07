@@ -61,11 +61,24 @@ pauseButton.addEventListener('click', function() {
 
 });
 
+// set the score to zero
+let score = 0;
+
+// define the contents of the end game modal
+const endGameModalText = `
+    <h1>You now report to a robot.</h1>
+    <p>Your score: ${score}</p>
+    <button id="try-again">Try again</button>
+    `;
+
 // create a function to end the game
 function endGame() {
     
     // stop the game
     gameGo = false;
+
+    // change what the modal says
+    modalContents.innerHTML = endGameModalText;
 
     // open the dialog
     modal.classList.remove('hidden');
@@ -78,11 +91,8 @@ function endGame() {
 endButton.addEventListener('click', function() {
     endGame();
 
-    modalContents.innerHTML = `
-    <h1>You now report to a robot.</h1>
-    <p>Your score: ${score}</p>
-    <button id="try-again">Try again</button>
-    `;
+    // change what the modal says
+    modalContents.innerHTML = endGameModalText;
 
 
     // grab the try again button
@@ -115,11 +125,6 @@ endButton.addEventListener('click', function() {
     });
 
 });
-
-// end the game if protagonist dies or if no further enemies exist
-
-// set the score to zero
-let score = 0;
 
 // create a class for enemies
 class Enemy {
@@ -346,7 +351,7 @@ let spawnIntervalId;
 // currently set to every two seconds (2000ms)
 function startSpawningEnemies() {
 
-    // clear existing id
+    // clear existing interval
     if (spawnIntervalId) {
         clearInterval(spawnIntervalId);
     }
@@ -372,15 +377,20 @@ function startSpawningEnemies() {
 
             // stop spawning more enemies
             clearInterval(spawnIntervalId);
-            console.log('Maximum enemigos reached. Ending game in 3 sec...')
+            console.log('Maximum enemigos reached. Ending game shortly...')
             
-            // set a 3-second timer to end the game
-            setTimeout(() => {
+            // check every half second to see if all enemies are gone
+            const checkForClearEnemies = setInterval(() => {
                 if(document.querySelectorAll('.enemigo').length === 0 && gameGo) {
+
+                    // end the checking
+                    clearInterval(checkForClearEnemies);
+
+                    // end the game
                     endGame();
                     console.log('Game ended because enemies were exhausted.')
                 }
-            }, 3000);
+            }, 500);
         }
     }, 2000);
 };
