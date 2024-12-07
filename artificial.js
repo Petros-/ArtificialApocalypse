@@ -70,19 +70,20 @@ function endGame() {
     // open the dialog
     modal.classList.remove('hidden');
 
+    console.log('The game ended.');
     // need to write to local storage here
 
 };
 
 endButton.addEventListener('click', function() {
     endGame();
+
     modalContents.innerHTML = `
     <h1>You now report to a robot.</h1>
     <p>Your score: ${score}</p>
     <button id="try-again">Try again</button>
     `;
 
-    console.log('The game ended.')
 
     // grab the try again button
     const tryAgain = document.getElementById('try-again');
@@ -96,7 +97,6 @@ endButton.addEventListener('click', function() {
 
         // put away the modal
         modal.classList.add('hidden');
-        modal.style.display = 'none';
 
         // change the buttons back
         endButton.classList.add('hidden');
