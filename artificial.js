@@ -30,14 +30,7 @@ let proObject = {
     health: 2
 };
 
-// create a session object to store game scores locally
-class Session {
-    constructor(nameOfPlayer, gameEndTime, gameEndScore) {
-        this.nameOfPlayer = nameOfPlayer;
-        this.gameEndTime = gameEndTime;
-        this.score = gameEndScore;
-    }
-};
+
 
 
 // start the game at the press of the button
@@ -85,6 +78,15 @@ pauseButton.addEventListener('click', function() {
 // set the score to zero
 let score = 0;
 
+// create a session object to store game scores locally
+class GameSession {
+    constructor(nameOfPlayer, gameEndTime, gameEndScore) {
+        this.nameOfPlayer = nameOfPlayer;
+        this.gameEndTime = gameEndTime;
+        this.score = gameEndScore;
+    }
+};
+
 // define the contents of the end game modal
 const endGameModalText = `
     <h1>You now report to a robot.</h1>
@@ -106,8 +108,43 @@ function endGame() {
 
     console.log('The game ended.');
 
-    // need to write to local storage here
-    localStorage.setItem('some key', 'some changed value');
+    // get the current time
+    const now = new Date();
+    const nowPrettier = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+    // construct a game record of a single game
+    const gameRecord = new GameSession(playerName.value, nowPrettier, score);
+
+    // initialize the games list variable
+    let gamesList;
+    
+    // if local storage has something in it
+    // then get the item and append to it
+    if (localStorage.length > 0) {
+
+        // local storage has items
+        // so get the items and parse the JSON into an object
+        gamesList = JSON.parse(localStorage.getItem('Games played'));
+
+        // then push the game record you just created above into that list
+        gamesList.push(gameRecord);
+
+        // and update local storage with the new array
+        localStorage.setItem('Games played', JSON.stringify(gamesList));
+    } else {
+
+        // local storage is empty
+        // so create a new array
+        gamesList = [];
+
+        // and push the new game record into it
+        gamesList.push(gameRecord);
+
+        // and update local storage with the new array
+        localStorage.setItem('Games played', JSON.stringify(gamesList));
+    }
+   
+    console.log(gamesList);
 
 };
 
