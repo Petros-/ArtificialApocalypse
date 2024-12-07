@@ -10,23 +10,32 @@
         <div class="modal-overlay" id="modal">
             <div class="modal-style" id="modal-contents">
                 <h1>Robots are coming for your job. </h1>
-                <div class="bullet-text">
+                <!-- <div class="bullet-text">
                     <ul>
                         <li>Collect stardust</li>
                         <li>Build defenses</li>
                         <li>Determine the future</li>
                     </ul>
-                </div>
-                <button id="begin">Begin</button>
+                </div> -->
+                <p>Avoid the onslaught. Use the arrow keys &lpar; &larr; &rarr; &rpar; and spacebar to survive.</p>
+                <form id="get-player-name">
+                    <div class="form-group">
+                        <label form="player-name">Player name</label>
+                        <input id="player-name" class="form-control validate-input" type="text" name="player-name"/>
+                        <small class="error hidden" aria-live="polite"></small>
+                      </div>
+                </form>
+                <button id="begin" type="submit" form="get-player-name">Begin</button>
             </div>
         </div>
         <div id="gameboard-container">
             <div id="overlay">
                 <div class="topLine">
-                    <div class="elapsedTime">
+                    <!-- <div class="elapsedTime"> -->
                         <!-- am I going to make a timer? -->
-                        <p>Time 1:45</p>
-                    </div>
+                        <!-- <p>Time 1:45</p> -->
+                    <!-- </div> -->
+                    <div id="player-name-display" class="player-name-display">Player 1</div>
                     <div class="middle">
                         <p>Avoid the onslaught. Use &larr; &rarr; and spacebar to survive.</p>
                         <button id="pause">Pause</button>

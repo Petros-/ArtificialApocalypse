@@ -11,7 +11,17 @@ const pauseButton = document.getElementById('pause');
 const endButton = document.getElementById('endGame');
 const modal = document.getElementById('modal');
 const modalContents = document.getElementById('modal-contents');
+const playerName = document.getElementById('player-name');
+const playerNameDisplay = document.getElementById('player-name-display');
 
+// update the name when the field gets changed
+playerName.addEventListener('input', function() {
+    playerNameDisplay.textContent = playerName.value;
+});
+
+// set a default value for player name in the form
+playerName.value = 'Player 1';
+playerNameDisplay.textContent = playerName.value;
 
 // don't start the game until the start button is pressed
 let gameGo = false;
@@ -23,7 +33,10 @@ let proObject = {
 
 
 // start the game at the press of the button
-beginButton.addEventListener('click', function() {
+beginButton.addEventListener('click', function(event) {
+
+    // Prevent form submission (refresh)
+    event.preventDefault();
 
     // close the modal
     modal.classList.add('hidden');
@@ -84,6 +97,7 @@ function endGame() {
     modal.classList.remove('hidden');
 
     console.log('The game ended.');
+
     // need to write to local storage here
 
 };
@@ -379,7 +393,7 @@ function startSpawningEnemies() {
             clearInterval(spawnIntervalId);
             console.log('Maximum enemigos reached. Ending game shortly...')
             
-            // check every half second to see if all enemies are gone
+            // check every two seconds to see if all enemies are gone
             const checkForClearEnemies = setInterval(() => {
                 if(document.querySelectorAll('.enemigo').length === 0 && gameGo) {
 
@@ -390,7 +404,7 @@ function startSpawningEnemies() {
                     endGame();
                     console.log('Game ended because enemies were exhausted.')
                 }
-            }, 500);
+            }, 2000);
         }
     }, 2000);
 };

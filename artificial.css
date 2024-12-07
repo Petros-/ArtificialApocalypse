@@ -48,25 +48,29 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-content: stretch;
+    align-items: stretch;
     gap: 0;
 }
 
-.elapsedTime, .points, .middle {
+.elapsedTime, .points, .middle, .player-name-display {
+    /* display: flex; */
     padding: 4px 20px;
 }
 
-.elapsedTime, .points {
+.elapsedTime, .points, .player-name-display  {
     flex: 0 0 auto;
 }
 
-.elapsedTime {
+.elapsedTime, .player-name-display  {
+    display:flex;
+    justify-content: center;
+    align-items: center;
     background-color: magenta;
-
+    /* padding: 4px 20px; */
 }
 
 .points {
     background-color: yellow;
-    
 }
 
 .middle {
@@ -75,6 +79,7 @@ body {
     flex-direction: row;
     align-items: center;
     align-content: stretch;
+    justify-content: center;
     gap: 12px;
     flex: 1;
 }
@@ -132,6 +137,10 @@ button {
 .bullet-text {
     width: 80%;
     text-align: left;
+}
+
+.form-group {
+    padding: 40px;
 }
 
 .hidden {
