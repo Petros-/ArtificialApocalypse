@@ -10,9 +10,18 @@ const beginButton = document.getElementById('begin');
 const pauseButton = document.getElementById('pause');
 const endButton = document.getElementById('endGame');
 const modal = document.getElementById('modal');
+const modalContents = document.getElementById('modal-contents');
+const tryAgain = document.getElementById('try-again');
 
 // don't start the game until the start button is pressed
 let gameGo = false;
+
+// create a function to end the game
+function endGame() {
+    gameGo = false;
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+};
 
 // start the game at the press of the button
 beginButton.addEventListener('click', function() {
@@ -50,7 +59,15 @@ pauseButton.addEventListener('click', function() {
 
 });
 
+endButton.addEventListener('click', function() {
+    endGame();
+    modalContents.innerHTML = `
+    <h1>You now report to a robot.</h1>
+    <p>Your score: ${score}</p>
+    <button id="try-again">Try again</button>
+    `;
 
+})
 
 
 // end the game if protagonist dies or if no further enemies exist
@@ -80,7 +97,8 @@ class Enemy {
 }
 
 // author an enemy instance of the class
-const enemyNo1 = new Enemy('Blatherus', 8, 'images/Enemy 1.png' );
+// here's where to change the enemy speed
+const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy 1.png' );
 
 // make sure it actually exists
 // console.log(enemyNo1);
@@ -182,6 +200,8 @@ function moveDown(element, enemy) {
         }
 
         const gameBoardHeight = gameBoard.offsetHeight;
+
+        // remove the enemy if it goes offscreen
         if (yPosition > gameBoardHeight - element.offsetHeight) {
             clearInterval(moveInterval);
             element.remove();
@@ -265,7 +285,7 @@ function shoot(shooter) {
         });
         
     }, 50);
-}
+};
 
 // prevent infinite rendering 
 let enemyCount = 0;
@@ -274,6 +294,7 @@ let enemyCount = 0;
 const maximumEnemigos = 5;
 
 // spawn a new enemy every so often
+// currently set to every two seconds (2000ms)
 const spawnInterval = setInterval (() => {
 
     // only spawn if there aren't too many enemies already
@@ -282,6 +303,8 @@ const spawnInterval = setInterval (() => {
         return;
 
     } else if ((enemyCount < maximumEnemigos) && gameGo){
+
+        // spawn enemies of type enemyNo1
         spawn(enemyNo1);
         enemyCount = enemyCount + 1;
         console.log(`Enemy count: ${enemyCount}`);
@@ -291,7 +314,9 @@ const spawnInterval = setInterval (() => {
         clearInterval(spawnInterval);
         console.log("Maximum enemigos reached.")
     }
-    }, 2000);
+}, 2000);
+
+
 
 
 
