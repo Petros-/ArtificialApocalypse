@@ -34,6 +34,9 @@ beginButton.addEventListener('click', function() {
 
     // set the game to start
     gameGo = !gameGo;
+
+    // start spawning enemies
+    startSpawningEnemies();
     
     console.log('Should the game go? ' + gameGo);
 });
@@ -71,7 +74,10 @@ endButton.addEventListener('click', function() {
 
     console.log('The game ended.')
 
+    // grab the try again button
     const tryAgain = document.getElementById('try-again');
+
+    // what to do if try again gets clicked
     tryAgain.addEventListener('click', function() {
         enemyCount = 0;
         score = 0;
@@ -93,6 +99,8 @@ endButton.addEventListener('click', function() {
         // reset the score display
         scoreHolder.textContent = score;
 
+        // start spawning enemies again
+        startSpawningEnemies();
         
     });
 
@@ -324,33 +332,33 @@ let enemyCount = 0;
 // put a cap on how many enemies get rendered
 const maximumEnemigos = 5;
 
+// create a controller or id for managing overall spawning
+let spawnIntervalId;
+
 // spawn a new enemy every so often
 // currently set to every two seconds (2000ms)
-const spawnInterval = setInterval (() => {
+function startSpawningEnemies() {
 
-    // only spawn if there aren't too many enemies already
-    // and if the game is not paused
-    if (!gameGo) {
-        return;
-
-    } else if ((enemyCount < maximumEnemigos) && gameGo){
-
-        // spawn enemies of type enemyNo1
-        spawn(enemyNo1);
-        enemyCount = enemyCount + 1;
-        console.log(`Enemy count: ${enemyCount}`);
-    } else {
-        
-        // stop spawning once interval is reached
-        clearInterval(spawnInterval);
-        console.log("Maximum enemigos reached.")
+    // clear existing id
+    if (spawnIntervalId) {
+        clearInterval(spawnIntervalId);
     }
-}, 2000);
 
+    spawnIntervalId = setInterval (() => {
 
+        // only spawn if there aren't too many enemies already
+        // and if the game is not paused
+        if (!gameGo) {
+            return;
+        }
 
-
-
-
-
+        if (enemyCount < maximumEnemigos){
+    
+            // spawn enemies of type enemyNo1
+            spawn(enemyNo1);
+            enemyCount++;
+            console.log(`Enemy count: ${enemyCount}`);
+        } 
+    }, 2000);
+};
 
