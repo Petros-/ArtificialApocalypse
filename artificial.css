@@ -84,7 +84,7 @@ button {
 }
 
 #protagonist {
-    background-color: lightgreen;
+    /* background-color: lightgreen; */
     position:absolute;
     height: 84px;
     width: 156px;
@@ -98,10 +98,6 @@ button {
     background-color: red;
     position: absolute;
     border-radius: 4px;
-}
-
-.hidden {
-    display: none;
 }
 
 .modal-overlay {
@@ -118,7 +114,7 @@ button {
 }
 
 
-.modal {
+.modal-style {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -136,4 +132,8 @@ button {
 .bullet-text {
     width: 80%;
     text-align: left;
+}
+
+.hidden {
+    display: none;
 }

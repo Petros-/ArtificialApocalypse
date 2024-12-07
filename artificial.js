@@ -16,21 +16,17 @@ const modalContents = document.getElementById('modal-contents');
 // don't start the game until the start button is pressed
 let gameGo = false;
 
-// create a function to end the game
-function endGame() {
-    gameGo = false;
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
+let proObject = {
+    health: 2
+}
 
-    // need to write to local storage here
-};
+
 
 // start the game at the press of the button
 beginButton.addEventListener('click', function() {
 
     // close the modal
     modal.classList.add('hidden');
-    modal.style.display = 'none';
 
     // set the game to start
     gameGo = !gameGo;
@@ -39,6 +35,7 @@ beginButton.addEventListener('click', function() {
     startSpawningEnemies();
     
     console.log('Should the game go? ' + gameGo);
+    console.log(modal.classList);
 });
 
 pauseButton.addEventListener('click', function() {
@@ -63,6 +60,19 @@ pauseButton.addEventListener('click', function() {
     // console.log('Game is running? ', gameGo);
 
 });
+
+// create a function to end the game
+function endGame() {
+    
+    // stop the game
+    gameGo = false;
+
+    // open the dialog
+    modal.classList.remove('hidden');
+
+    // need to write to local storage here
+
+};
 
 endButton.addEventListener('click', function() {
     endGame();
@@ -105,9 +115,6 @@ endButton.addEventListener('click', function() {
     });
 
 });
-
-
-
 
 // end the game if protagonist dies or if no further enemies exist
 
@@ -248,7 +255,7 @@ function moveDown(element, enemy) {
 
         // do collision detection
         if (detectCollision(pro, element)) {
-            console.log('Collided! with:', enemy.name);
+            console.log('Collided! with enemy type:', enemy.name);
             protagonist.style.backgroundColor = 'red';
             clearInterval(moveInterval);
             element.remove();
@@ -359,6 +366,27 @@ function startSpawningEnemies() {
             enemyCount++;
             console.log(`Enemy count: ${enemyCount}`);
         } 
+
+        // if there are no more enemies end the game with a delay
+        if (enemyCount === maximumEnemigos) {
+
+            // stop spawning more enemies
+            clearInterval(spawnIntervalId);
+            console.log('Maximum enemigos reached. Ending game in 3 sec...')
+            
+            // set a 3-second timer to end the game
+            setTimeout(() => {
+                if(document.querySelectorAll('.enemigo').length === 0 && gameGo) {
+                    endGame();
+                    console.log('Game ended because enemies were exhausted.')
+                }
+            }, 3000);
+        }
     }, 2000);
 };
+
+// if the protagonist health reaches zero end the game
+if (proObject.health === 0) {
+    endGame();
+}
 
