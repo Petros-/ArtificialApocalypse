@@ -35,7 +35,7 @@ beginButton.addEventListener('click', function() {
     // set the game to start
     gameGo = !gameGo;
     
-    console.log('Should the game go?' + gameGo);
+    console.log('Should the game go? ' + gameGo);
 });
 
 pauseButton.addEventListener('click', function() {
@@ -69,14 +69,22 @@ endButton.addEventListener('click', function() {
     <button id="try-again">Try again</button>
     `;
 
+    console.log('The game ended.')
+
     const tryAgain = document.getElementById('try-again');
     tryAgain.addEventListener('click', function() {
         enemyCount = 0;
         score = 0;
         gameGo = true;
         // timer would need to be reset too
+
+        // put away the modal
         modal.classList.add('hidden');
         modal.style.display = 'none';
+
+        // change the buttons back
+        endButton.classList.add('hidden');
+        pauseButton.textContent = 'Pause';
 
         // get rid of the existing enemies
         const existingEnemies = document.querySelectorAll('.enemigo');
@@ -84,6 +92,8 @@ endButton.addEventListener('click', function() {
 
         // reset the score display
         scoreHolder.textContent = score;
+
+        
     });
 
 });
