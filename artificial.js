@@ -13,6 +13,7 @@ const modal = document.getElementById('modal');
 const modalContents = document.getElementById('modal-contents');
 const playerName = document.getElementById('player-name');
 const playerNameDisplay = document.getElementById('player-name-display');
+const topScoreHandle = document.getElementById('top-score');
 
 // update the name when the field gets changed
 playerName.addEventListener('input', function() {
@@ -30,8 +31,6 @@ let gameGo = false;
 let proObject = {
     health: 2
 };
-
-
 
 
 // start the game at the press of the button
@@ -91,11 +90,16 @@ class GameSession {
 // define the contents of the end game modal
 const endGameModalText = `
     <h1>You now report to a robot.</h1>
-    
+    <p class="bullet-text">Unfortunately the human programming this game failed
+    to define a win condition, which means the only way out is to lose. 
+    But you can always improve your top score!</p>
     <button id="try-again">Try again</button>
     `;
 
     // <p>Your score: ${score}</p>
+
+// set a variable for the top score
+let topScore;
 
 // create a function to end the game
 function endGame() {
@@ -147,6 +151,14 @@ function endGame() {
         // and update local storage with the new array
         localStorage.setItem('Games played', JSON.stringify(gamesList));
     }
+
+    // update the top score
+    topScore = gamesList.reduce((max, record) => {
+        return (record.score > max.score) ? record : max;
+    }, gamesList[0]);
+
+    // update the text on screen
+    topScoreHandle.textContent = `Top score: ${topScore.score}`;
    
     console.log(gamesList);
 
