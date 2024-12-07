@@ -7,29 +7,48 @@ const pro = document.getElementById('protagonist');
 const bull = document.getElementsByClassName('bullet');
 const scoreHolder = document.getElementById('score');
 const beginButton = document.getElementById('begin');
+const pauseButton = document.getElementById('pause');
 const endButton = document.getElementById('endGame');
+const modal = document.getElementById('modal');
 
 // don't start the game until the start button is pressed
 let gameGo = false;
+
+// start the game at the press of the button
 beginButton.addEventListener('click', function() {
+
+    // close the modal
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
 
     // set the game to start
     gameGo = !gameGo;
-
-    // create a toggle that changes what buttons say and do
-    if (!gameGo) {
-
-        // pause the game if the pause button is pressed
-        endButton.classList.remove('hidden');
-        beginButton.textContent = 'Resume';
-    } else {
-        endButton.classList.add('hidden');
-        beginButton.textContent = 'Pause';
-    }
     
     console.log('Should the game go?' + gameGo);
 });
 
+pauseButton.addEventListener('click', function() {
+
+    // pause the game
+    gameGo = !gameGo;
+
+     // create a toggle that changes what buttons say and do
+     if (gameGo) {
+
+        // resume the game
+        endButton.classList.add('hidden');
+        pauseButton.textContent = 'Pause';
+        
+    } else {
+
+        // pause the game
+        endButton.classList.remove('hidden');
+        pauseButton.textContent = 'Resume';
+    }
+
+    // console.log('Game is running? ', gameGo);
+
+});
 
 
 

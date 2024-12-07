@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="artificial.css">
     </head>
     <body>
-        <div class="modal-overlay">
+        <div class="modal-overlay" id="modal">
             <div class="modal">
                 <h1>Robots are coming for your job. </h1>
                 <div class="bullet-text">
@@ -17,6 +17,7 @@
                         <li>Determine the future</li>
                     </ul>
                 </div>
+                <button id="begin">Begin</button>
             </div>
         </div>
         <div id="gameboard-container">
@@ -27,7 +28,7 @@
                     </div>
                     <div class="middle">
                         <p>Avoid the onslaught. Use &larr; &rarr; and spacebar to survive.</p>
-                        <button id="begin">Begin</button>
+                        <button id="pause">Pause</button>
                         <button id="endGame" class="hidden">End game</button>
                     </div>
                     <div class="points">
