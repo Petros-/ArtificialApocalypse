@@ -15,6 +15,12 @@ const playerName = document.getElementById('player-name');
 const playerNameDisplay = document.getElementById('player-name-display');
 const topScoreHandle = document.getElementById('top-score');
 
+// store some sounds
+const thud = new Audio('sounds/Thud.m4a');
+const ding = new Audio('sounds/GlassDing.m4a');
+const paperCrush = new Audio('sounds/PaperWaste.m4a');
+const flutter = new Audio('sounds/Flutter.m4a');
+
 // update the name when the field gets changed
 playerName.addEventListener('input', function() {
     playerNameDisplay.textContent = playerName.value;
@@ -122,13 +128,28 @@ class GameSession {
     }
 };
 
-// define the contents of the end game modal
+// text if you lose
 const endGameModalText = `
     <h1>You now report to a robot.</h1>
-    <p class="bullet-text">Unfortunately the human programming this game failed
-    to define a win condition, which means the only way out is to lose. 
-    But you can always improve your top score!</p>
+    <p class="bullet-text">You failed to fend off the robots, and now
+    they\'ve taken your job.</p>
     <button id="try-again">Try again</button>
+    `;
+
+// text if you win
+const winGameModalText = `
+    <h1>You did it.</h1>
+    <p class="bullet-text">You won. You beat the game. This calls for celebration.</p>
+    <button id="try-again">Play again</button>
+    `;
+
+// text if you exit the game
+const exitGameModalText = `
+    <h1>You left?</h1>
+    <p class="bullet-text"> Sad to see you go, but if you want to play again, 
+    we'll be here.
+    </p>
+    <button id="try-again">Play again</button>
     `;
 
     // <p>Your score: ${score}</p>
@@ -136,7 +157,7 @@ const endGameModalText = `
 // set a variable for the top score
 let topScore;
 
-// create a function to end the game
+// what to do at the ending of the game
 function endGame() {
     
     // stop the game
@@ -234,7 +255,7 @@ endButton.addEventListener('click', function() {
     endGame();
 
     // change what the modal says
-    modalContents.innerHTML = endGameModalText;
+    modalContents.innerHTML = exitGameModalText;
 
 });
 
@@ -279,8 +300,6 @@ const slots = [
     slotIncrement * 4 + slotIncrement,
     slotIncrement * 5 + slotIncrement 
 ];
-
-
 
 // how many pixels per frame to move objects
 const movementSpeed = 5;
@@ -389,11 +408,20 @@ function moveDown(element, enemy) {
         if (detectCollision(pro, element)) {
             console.log('Collided! with enemy type:', enemy.name);
             protagonist.style.backgroundColor = 'red';
+            thud.play();
             clearInterval(moveInterval);
             element.remove();
-        }
+            proObject.health = proObject.health - 1;
+            console.log('Protagonist health: ', proObject.health);
+        };
+        
+        // if the protagonist health reaches zero end the game
+        if (proObject.health === 0) {
+            endGame()
+        };
     }, 50);
 };
+
 
 // detect collisions
 function detectCollision(attacker, attackee) {
@@ -448,6 +476,9 @@ function shoot(shooter) {
         enemies.forEach(enemy => {
             if (detectCollision(projectile, enemy)) {
                 console.log('Hit:', enemy.alt);
+
+                ding.play();
+                paperCrush.play();
 
                 // increment the score upwards
                 score = score + parseInt(enemy.dataset.bounty);
@@ -515,17 +546,13 @@ function startSpawningEnemies() {
 
                     // end the game
                     endGame();
+
+                    // change what the modal says
+                    modalContents.innerHTML = winGameModalText;
+
                     console.log('Game ended because enemies were exhausted.')
                 }
             }, 2000);
         }
     }, 2000);
 };
-
-
-
-// if the protagonist health reaches zero end the game
-if (proObject.health === 0) {
-    endGame();
-}
-
