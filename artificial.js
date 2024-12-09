@@ -10,7 +10,7 @@ const beginButton = document.getElementById('begin');
 const pauseButton = document.getElementById('pause');
 const endButton = document.getElementById('endGame');
 const modal = document.getElementById('modal');
-const modalContents = document.getElementById('modal-contents');
+const modalBlock = document.getElementById('modal-contents');
 const playerName = document.getElementById('player-name');
 const playerNameDisplay = document.getElementById('player-name-display');
 const topScoreHandle = document.getElementById('top-score');
@@ -128,31 +128,29 @@ class GameSession {
     }
 };
 
-// text if you lose
-const endGameModalText = `
+const modalContents = [
+    `
     <h1>You now report to a robot.</h1>
     <p class="bullet-text">You failed to fend off the robots, and now
     they\'ve taken your job.</p>
     <button id="try-again">Try again</button>
-    `;
-
-// text if you win
-const winGameModalText = `
+    `,
+    `
     <h1>You did it.</h1>
     <p class="bullet-text">You won. You beat the game. This calls for celebration.</p>
     <button id="try-again">Play again</button>
-    `;
-
-// text if you exit the game
-const exitGameModalText = `
+    `,
+    `
     <h1>You left?</h1>
     <p class="bullet-text"> Sad to see you go, but if you want to play again, 
     we'll be here.
     </p>
     <button id="try-again">Play again</button>
-    `;
+    `
 
-    // <p>Your score: ${score}</p>
+];
+
+// <p>Your score: ${score}</p>
 
 // set a variable for the top score
 let topScore;
@@ -162,46 +160,48 @@ function endGame() {
     
     // stop the game
     gameGo = false;
-
-    // change what the modal says
-    modalContents.innerHTML = endGameModalText;
-
-    // grab the try again button
-    const tryAgain = document.getElementById('try-again');
-
-    // what to do if try again gets clicked
-    tryAgain.addEventListener('click', function() {
-        enemyCount = 0;
-        score = 0;
-        gameGo = true;
-        
-        // prevent protagonist jumping
-        pro.style.left = "400px";
-
-        // put away the modal
-        modal.classList.add('hidden');
-
-        // change the buttons back
-        endButton.classList.add('hidden');
-        pauseButton.textContent = 'Pause';
-
-        // get rid of the existing enemies
-        const existingEnemies = document.querySelectorAll('.enemigo');
-        existingEnemies.forEach(enemy => enemy.remove());
-
-        // reset the score display
-        scoreHolder.textContent = score;
-
-        // start spawning enemies again
-        startSpawningEnemies();
-        
-    });
+    setModalContent(modalContents[0]);
 
     // open the dialog
     modal.classList.remove('hidden');
-
     console.log('The game ended.');
 
+    updateGameRecords();
+
+};
+
+// // grab the try again button
+// const tryAgain = document.getElementById('try-again');
+
+// // what to do if try again gets clicked
+// tryAgain.addEventListener('click', function() {
+//     enemyCount = 0;
+//     score = 0;
+//     gameGo = true;
+    
+//     // prevent protagonist jumping
+//     pro.style.left = "400px";
+
+//     // put away the modal
+//     modal.classList.add('hidden');
+
+//     // change the buttons back
+//     endButton.classList.add('hidden');
+//     pauseButton.textContent = 'Pause';
+
+//     // get rid of the existing enemies
+//     const existingEnemies = document.querySelectorAll('.enemigo');
+//     existingEnemies.forEach(enemy => enemy.remove());
+
+//     // reset the score display
+//     scoreHolder.textContent = score;
+
+//     // start spawning enemies again
+//     startSpawningEnemies();
+    
+// });
+
+function updateGameRecords() {
     // get the current time
     const now = new Date();
     const nowPrettier = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
@@ -240,22 +240,70 @@ function endGame() {
     }
 
     // update the top score
-    topScore = gamesList.reduce((max, record) => {
-        return (record.score > max.score) ? record : max;
-    }, gamesList[0]);
-
-    // update the text on screen
-    topScoreHandle.textContent = `Top score: ${topScore.score}`;
+    if (gamesList.length > 0) {
+        topScore = gamesList.reduce((max, record) => {
+            return (record.score > max.score) ? record : max;
+        });
+        topScoreHandle.textContent = `Top score: ${top-score}`;
+    } else {
+        topScoreHandle.textContent = 'Top score: TBD';
+    }
    
     console.log(gamesList);
-
 };
+
+function setModalContent(content) {
+    modalBlock.innerHTML = content;
+
+    // attach the try again button listener dynamically
+    const tryAgain = document.getElementById('try-again');
+    
+    if (tryAgain) {
+
+        // call restart game directly
+        tryAgain.addEventListener('click', restartGame);
+    
+    }
+};
+
+
+// new function added Dec 8
+function restartGame() {
+    // reset stuff including protagonist health
+    proObject.health = 2;
+    pro.style.left = '400px';
+    enemyCount = 0;
+    score = 0;
+    gameGo = true;
+
+    // reset protagonist's position
+    pro.style.left = '400px';
+
+    // hide the modal
+    modal.classList.add('hidden');
+
+    // reset buttons and display
+    endButton.classList.add('hidden');
+    pauseButton.textContent = 'Pause';
+
+    // remove existing enemies
+    const existingEnemies = document.querySelectorAll('.enemigo');
+    existingEnemies.forEach(enemy => enemy.remove());
+
+    // reset the score display
+    scoreHolder.textContent = score;
+
+    // start spawning enemies
+    startSpawningEnemies();
+}
+
 
 endButton.addEventListener('click', function() {
     endGame();
 
     // change what the modal says
-    modalContents.innerHTML = exitGameModalText;
+    setModalContent(modalContents[2]);
+    modal.classList.add('hidden');
 
 });
 
@@ -402,6 +450,7 @@ function moveDown(element, enemy) {
         if (yPosition > gameBoardHeight - element.offsetHeight) {
             clearInterval(moveInterval);
             element.remove();
+            // enemyCount--; 
         }
 
         // do collision detection
@@ -411,12 +460,13 @@ function moveDown(element, enemy) {
             thud.play();
             clearInterval(moveInterval);
             element.remove();
+            // enemyCount--; 
             proObject.health = proObject.health - 1;
             console.log('Protagonist health: ', proObject.health);
         };
         
         // if the protagonist health reaches zero end the game
-        if (proObject.health === 0) {
+        if (proObject.health === 0 || document.querySelectorAll('.enemigo').length === 0) {
             endGame()
         };
     }, 50);
@@ -535,6 +585,7 @@ function startSpawningEnemies() {
 
             // stop spawning more enemies
             clearInterval(spawnIntervalId);
+            gameGo = false;
             console.log('Maximum enemigos reached. Ending game shortly...')
             
             // check every two seconds to see if all enemies are gone
@@ -548,7 +599,7 @@ function startSpawningEnemies() {
                     endGame();
 
                     // change what the modal says
-                    modalContents.innerHTML = winGameModalText;
+                    modalBlock.innerHTML = modalContents[1];
 
                     console.log('Game ended because enemies were exhausted.')
                 }
