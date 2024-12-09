@@ -36,6 +36,7 @@ body {
 
 #gameBoard {
     /* border: 1px solid red;  */
+    position: relative;
 }
 
 .gameBoard div {
@@ -109,6 +110,10 @@ button {
     bottom: 0px;
 }
 
+.danger {
+    background-color: red;
+}
+
 .bullet {
     height: 12px;
     width: 12px;
@@ -165,6 +170,8 @@ input {
     color: white;
     background-color: #333;
 }
+
+
 
 .invalid {
     border: 1px solid red;

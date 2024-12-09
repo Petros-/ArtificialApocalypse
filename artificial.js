@@ -18,6 +18,7 @@ const thud = new Audio('sounds/Thud.m4a');
 const ding = new Audio('sounds/GlassDing.m4a');
 const paperCrush = new Audio('sounds/PaperWaste.m4a');
 const flutter = new Audio('sounds/Flutter.m4a');
+const pop = new Audio('sounds/Pop1short.m4a');
 
 // Form stuff
 // update the name when the field gets changed
@@ -99,8 +100,7 @@ beginButton.addEventListener('click', function(event) {
         // start spawning enemies
         startSpawningEnemies();
         
-        console.log('Should the game go? ' + gameState.isRunning);
-        console.log(modal.classList);
+        console.log('Is the game running? ' + gameState.isRunning);
     } else {
         alert('Please enter a valid player name including any characters you want. Just don\'t leave it blank');
     }
@@ -274,6 +274,7 @@ function restartGame() {
 
     // reset protagonist's position
     pro.style.left = '400px';
+    pro.classList.remove('danger');
 
     // hide the modal
     modal.classList.add('hidden');
@@ -326,8 +327,9 @@ class Enemy {
 
 // author an enemy instance of the class
 // here's where to change the enemy speed
-const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy 1.png' );
-const enemyNo2 = new Enemy('Yekimor', 4, 'images/Enemy 1.png', 2);
+const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy1.png' );
+const enemyNo2 = new Enemy('Yekimor', 5, 'images/Enemy2.png', 2);
+const enemyNo3 = new Enemy('Bragamoor', 1, 'images/MegaBot.png', 10);
 
 // define how far apart the enemy travel lanes will be and where the first line is
 const firstSlot = 20;
@@ -416,7 +418,14 @@ function spawn(enemy) {
         enemyImg.dataset.bounty = enemy.bounty;
         enemyImg.dataset.strength = enemy.strength;
         
-        
+        // fix the z-ordering so that new enemies are behind old ones
+        if(enemy === enemyNo3) {
+            const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
+            enemyImg.style.zIndex = reversedZIndex;
+        } else {
+            enemyImg.style.zIndex = 1;
+        }
+
         // Append the img to the game board
         gameBoard.appendChild(enemyImg);
         
@@ -452,7 +461,7 @@ function moveDown(element, enemy) {
         if (detectCollision(pro, element)) {
 
             console.log('Collided! with enemy type:', enemy.name);
-            protagonist.style.backgroundColor = 'red';
+            protagonist.classList.add('danger');
             thud.play();
             clearInterval(moveInterval);
             element.remove();
@@ -498,6 +507,9 @@ function shoot(shooter) {
     // add the bullet class to it
     projectile.classList.add('bullet');
 
+    // edit this sound if you're going to actually use it
+    // pop.play();
+
     // generate rectangles from the elements
     const shooterRect = shooter.getBoundingClientRect();
     const gameBoardRect = gameBoard.getBoundingClientRect();
@@ -525,9 +537,9 @@ function shoot(shooter) {
             if (detectCollision(projectile, enemy)) {
                 console.log('Hit:', enemy.alt);
 
-                ding.play();
-                paperCrush.play();
-
+                // play the ding sound
+                
+                
                 // increment the score upwards
                 gameState.score = gameState.score + parseInt(enemy.dataset.bounty);
 
@@ -536,9 +548,12 @@ function shoot(shooter) {
 
                 // take 1 away from the enemy's strength
                 enemy.dataset.strength --;
-                console.log(enemy.dataset.strength);
 
-                if (enemy.dataset.strength < 1) {
+                // sound control
+                if (enemy.dataset.strength >= 1) {
+                    ding.play();
+                } else if (enemy.dataset.strength < 1) {
+                    paperCrush.play();
                     enemy.remove();
                     clearInterval(moveInterval);
                 }
@@ -573,6 +588,10 @@ function startSpawningEnemies() {
             spawn(enemyNo1);
             gameState.enemyCount++;
             console.log(`Enemy count: ${gameState.enemyCount}`);
+
+            setTimeout(spawn, 15000, enemyNo2);
+
+            setTimeout(spawn, 30000, enemyNo3)
         } 
 
         // if there are no more enemies end the game with a delay
