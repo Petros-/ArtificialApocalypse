@@ -55,7 +55,7 @@ class GameState {
         this.score = 0;
         this.protagonistHealth = 2;
         this.enemyCount = 0;
-        this.maximumEnemigos = 5;
+        this.maximumEnemigos = 20;
         this.topScore = 0;
     }
 
@@ -327,6 +327,7 @@ class Enemy {
 // author an enemy instance of the class
 // here's where to change the enemy speed
 const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy 1.png' );
+const enemyNo2 = new Enemy('Yekimor', 4, 'images/Enemy 1.png', 2);
 
 // define how far apart the enemy travel lanes will be and where the first line is
 const firstSlot = 20;
@@ -413,6 +414,7 @@ function spawn(enemy) {
         enemyImg.style.left = xPosition;
         enemyImg.classList.add('enemigo');
         enemyImg.dataset.bounty = enemy.bounty;
+        enemyImg.dataset.strength = enemy.strength;
         
         
         // Append the img to the game board
@@ -448,6 +450,7 @@ function moveDown(element, enemy) {
 
         // do collision detection
         if (detectCollision(pro, element)) {
+
             console.log('Collided! with enemy type:', enemy.name);
             protagonist.style.backgroundColor = 'red';
             thud.play();
@@ -527,14 +530,21 @@ function shoot(shooter) {
 
                 // increment the score upwards
                 gameState.score = gameState.score + parseInt(enemy.dataset.bounty);
-                // console.log(score);
 
                 // update the score onscreen
                 scoreHolder.textContent = gameState.score;
 
+                // take 1 away from the enemy's strength
+                enemy.dataset.strength --;
+                console.log(enemy.dataset.strength);
+
+                if (enemy.dataset.strength < 1) {
+                    enemy.remove();
+                    clearInterval(moveInterval);
+                }
+
                 projectile.remove();
-                enemy.remove();
-                clearInterval(moveInterval);
+                
             }
         });
         

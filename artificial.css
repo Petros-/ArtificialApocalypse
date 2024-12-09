@@ -114,6 +114,7 @@ button {
     width: 12px;
     background-color: red;
     position: absolute;
+    text-align: center;
     border-radius: 4px;
 }
 
