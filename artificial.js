@@ -1,6 +1,3 @@
-// make sure the connection is set up correctly
-// console.log("Hi there");
-
 // create handles for all the things I will need to grab
 const gameBoard = document.getElementById("gameBoard");
 const pro = document.getElementById('protagonist');
@@ -21,6 +18,7 @@ const ding = new Audio('sounds/GlassDing.m4a');
 const paperCrush = new Audio('sounds/PaperWaste.m4a');
 const flutter = new Audio('sounds/Flutter.m4a');
 
+// Form stuff
 // update the name when the field gets changed
 playerName.addEventListener('input', function() {
     playerNameDisplay.textContent = playerName.value;
@@ -29,9 +27,6 @@ playerName.addEventListener('input', function() {
 // set a default value for player name in the form
 playerName.value = 'Player 1';
 playerNameDisplay.textContent = playerName.value;
-
-// don't start the game until the start button is pressed
-let gameGo = false;
 
 // develop this to use the protagonist getting hit to end the game
 let proObject = {
@@ -54,6 +49,40 @@ const validatePlayerName = (name) => {
     
 };
 
+class GameState {
+    constructor() {
+
+        // is the game currently active?
+        this.isRunning = false;
+
+        // other things to track
+        this.score = 0;
+        this.protagonistHealth = 2;
+        this.enemyCount = 0;
+        this.maximumEnemigos = 5;
+        this.topScore = 0;
+    }
+
+    // reset the game state
+    reset() {
+        this.isRunning = true;
+        this.score = 0;
+        this.protagonistHealth = 2;
+        this.enemyCount = 0;
+        // this.maximumEnemigos = 5;
+    }
+
+    // udpate top score if applicable
+    updateTopScore() {
+        if(this.score > this.topScore) {
+            this.topScore = this.score;
+        }
+    }
+}
+
+// instantiate the game state
+const gameState = new GameState();
+
 // start the game at the press of the button
 beginButton.addEventListener('click', function(event) {
 
@@ -69,12 +98,12 @@ beginButton.addEventListener('click', function(event) {
         modal.classList.add('hidden');
     
         // set the game to start
-        gameGo = !gameGo;
+        gameState.isRunning = true;
     
         // start spawning enemies
         startSpawningEnemies();
         
-        console.log('Should the game go? ' + gameGo);
+        console.log('Should the game go? ' + gameState.isRunning);
         console.log(modal.classList);
     } else {
         alert('Please enter a valid player name including any characters you want. Just don\'t leave it blank');
@@ -84,10 +113,10 @@ beginButton.addEventListener('click', function(event) {
 pauseButton.addEventListener('click', function() {
 
     // pause the game
-    gameGo = !gameGo;
+    gameState.isRunning = false;
 
      // create a toggle that changes what buttons say and do
-     if (gameGo) {
+     if (gameState.isRunning) {
 
         // resume the game
         endButton.classList.add('hidden');
@@ -100,7 +129,7 @@ pauseButton.addEventListener('click', function() {
         pauseButton.textContent = 'Resume';
     }
 
-    // console.log('Game is running? ', gameGo);
+    // console.log('Game is running? ', gameState.isRunning);
 
 });
 
@@ -115,9 +144,6 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
     keysPressed[event.key] = false;
 });
-
-// define a variable for score and set it to zero
-let score = 0;
 
 // create a session object to store game scores locally
 class GameSession {
@@ -150,16 +176,15 @@ const modalContents = [
 
 ];
 
-// <p>Your score: ${score}</p>
-
-// set a variable for the top score
-let topScore;
-
 // what to do at the ending of the game
 function endGame() {
     
     // stop the game
-    gameGo = false;
+    gameState.isRunning = false;
+
+    // update top score if applicable
+    gameState.updateTopScore();
+
     setModalContent(modalContents[0]);
 
     // open the dialog
@@ -241,10 +266,10 @@ function updateGameRecords() {
 
     // update the top score
     if (gamesList.length > 0) {
-        topScore = gamesList.reduce((max, record) => {
+        gameState.topScore = gamesList.reduce((max, record) => {
             return (record.score > max.score) ? record : max;
         });
-        topScoreHandle.textContent = `Top score: ${top-score}`;
+        topScoreHandle.textContent = `Top score: ${gameState.topScore}`;
     } else {
         topScoreHandle.textContent = 'Top score: TBD';
     }
@@ -269,12 +294,8 @@ function setModalContent(content) {
 
 // new function added Dec 8
 function restartGame() {
-    // reset stuff including protagonist health
-    proObject.health = 2;
-    pro.style.left = '400px';
-    enemyCount = 0;
-    score = 0;
-    gameGo = true;
+    
+    gameState.reset();
 
     // reset protagonist's position
     pro.style.left = '400px';
@@ -291,7 +312,7 @@ function restartGame() {
     existingEnemies.forEach(enemy => enemy.remove());
 
     // reset the score display
-    scoreHolder.textContent = score;
+    scoreHolder.textContent = gameState.score;
 
     // start spawning enemies
     startSpawningEnemies();
@@ -406,7 +427,7 @@ document.addEventListener('keydown', (event) => {
 function spawn(enemy) {
 
     // only spawn and move if the game is not paused
-    if (gameGo) {
+    if (gameState.isRunning) {
 
         // pick a slot at random and put the spawn location there
         const xPosition = slots[Math.floor(Math.random() * slots.length)] + 'px';
@@ -437,7 +458,7 @@ function moveDown(element, enemy) {
 
     // Move the element down by some amount every 50ms
     const moveInterval = setInterval(() => {
-        if (!gameGo) {
+        if (!gameState.isRunning) {
             return;
         } else {
             yPosition += enemy.speed;
@@ -450,7 +471,7 @@ function moveDown(element, enemy) {
         if (yPosition > gameBoardHeight - element.offsetHeight) {
             clearInterval(moveInterval);
             element.remove();
-            // enemyCount--; 
+            
         }
 
         // do collision detection
@@ -460,13 +481,13 @@ function moveDown(element, enemy) {
             thud.play();
             clearInterval(moveInterval);
             element.remove();
-            // enemyCount--; 
-            proObject.health = proObject.health - 1;
-            console.log('Protagonist health: ', proObject.health);
+             
+            gameState.protagonistHealth -= 1;
+            console.log('Protagonist health: ', gameState.protagonistHealth);
         };
         
         // if the protagonist health reaches zero end the game
-        if (proObject.health === 0 || document.querySelectorAll('.enemigo').length === 0) {
+        if (gameState.protagonistHealth === 0 || document.querySelectorAll('.enemigo').length === 0) {
             endGame()
         };
     }, 50);
@@ -531,11 +552,11 @@ function shoot(shooter) {
                 paperCrush.play();
 
                 // increment the score upwards
-                score = score + parseInt(enemy.dataset.bounty);
+                gameState.score = gameState.score + parseInt(enemy.dataset.bounty);
                 // console.log(score);
 
                 // update the score onscreen
-                scoreHolder.textContent = score;
+                scoreHolder.textContent = gameState.score;
 
                 projectile.remove();
                 enemy.remove();
@@ -545,12 +566,6 @@ function shoot(shooter) {
         
     }, 50);
 };
-
-// prevent infinite rendering 
-let enemyCount = 0;
-
-// put a cap on how many enemies get rendered
-const maximumEnemigos = 5;
 
 // create a controller or id for managing overall spawning
 let spawnIntervalId;
@@ -568,29 +583,29 @@ function startSpawningEnemies() {
 
         // only spawn if there aren't too many enemies already
         // and if the game is not paused
-        if (!gameGo) {
+        if (!gameState.isRunning) {
             return;
         }
 
-        if (enemyCount < maximumEnemigos){
+        if (gameState.enemyCount < gameState.maximumEnemigos){
     
             // spawn enemies of type enemyNo1
             spawn(enemyNo1);
-            enemyCount++;
-            console.log(`Enemy count: ${enemyCount}`);
+            gameState.enemyCount++;
+            console.log(`Enemy count: ${gameState.enemyCount}`);
         } 
 
         // if there are no more enemies end the game with a delay
-        if (enemyCount === maximumEnemigos) {
+        if (gameState.enemyCount === gameState.maximumEnemigos) {
 
             // stop spawning more enemies
             clearInterval(spawnIntervalId);
-            gameGo = false;
+            gameState.isRunning = false;
             console.log('Maximum enemigos reached. Ending game shortly...')
             
             // check every two seconds to see if all enemies are gone
             const checkForClearEnemies = setInterval(() => {
-                if(document.querySelectorAll('.enemigo').length === 0 && gameGo) {
+                if(document.querySelectorAll('.enemigo').length === 0 && gameState.isRunning) {
 
                     // end the checking
                     clearInterval(checkForClearEnemies);
