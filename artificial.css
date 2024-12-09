@@ -152,11 +152,22 @@ button {
 }
 
 .form-group {
-    padding: 40px;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+input {
+    padding: 20px;
+    margin-left: 20px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    color: white;
+    background-color: #333;
 }
 
 .invalid {
     border: 1px solid red;
+    background: rgb(95, 8, 8);
     color: red;
 }
 

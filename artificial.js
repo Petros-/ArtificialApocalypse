@@ -244,9 +244,6 @@ function updateGameRecords() {
 
     // update the top score
     if (gamesList.length > 0) {
-        gameState.topScore = gamesList.reduce((max, record) => {
-            return (record.score > max.score) ? record : max;
-        });
         topScoreHandle.textContent = `Top score: ${gameState.topScore}`;
     } else {
         topScoreHandle.textContent = 'Top score: TBD';
