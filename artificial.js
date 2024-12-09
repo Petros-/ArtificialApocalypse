@@ -637,4 +637,5 @@ function startSpawningEnemies() {
     }, 2000);
 };
 
+// get a top score from the records at the start of the game
 updateGameRecords();
