@@ -154,7 +154,7 @@ const modalContents = [
     `
     <h1>You now report to a robot.</h1>
     <p class="bullet-text">You failed to fend off the robots, and now
-    they\'ve taken your job.</p>
+    they have taken your job.</p>
     <button id="try-again">Try again</button>
     `,
     `
@@ -229,6 +229,22 @@ function updateGameRecords() {
         // and update local storage with the new array
         localStorage.setItem('Games played', JSON.stringify(gamesList));
 
+        // find the highest score value
+        let maxScore = gamesList[0].score;
+        let maxObj = gamesList[0];
+
+        for (let i = 0; i < gamesList.length; i++) {
+            if (gamesList[i].score > maxScore) {
+                maxScore = gamesList[i].score;
+                maxObj = gamesList[i];
+            }
+        }
+        // and set the gamestate top score from it
+        gameState.topScore = maxScore;
+
+        // and update the topScore handle
+        topScoreHandle.textContent = gameState.topScore;
+
     } else {
 
         // local storage is empty
@@ -244,7 +260,7 @@ function updateGameRecords() {
 
     // update the top score
     if (gamesList.length > 0) {
-        topScoreHandle.textContent = `Top score: ${gameState.topScore}`;
+        topScoreHandle.textContent = gameState.topScore;
     } else {
         topScoreHandle.textContent = 'Top score: TBD';
     }
@@ -620,3 +636,5 @@ function startSpawningEnemies() {
         }
     }, 2000);
 };
+
+updateGameRecords();
