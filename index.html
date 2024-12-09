@@ -1,22 +1,54 @@
 <html>
     <head>
-        <title>Artificial Apocalypto</title>
+        <title>Artificial Apocalypse</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="artificial.css">
     </head>
     <body>
+        <div class="modal-overlay" id="modal">
+            <div class="modal-style" id="modal-contents">
+                <h1>Robots are coming for your job. </h1>
+                <!-- <div class="bullet-text">
+                    <ul>
+                        <li>Collect stardust</li>
+                        <li>Build defenses</li>
+                        <li>Determine the future</li>
+                    </ul>
+                </div> -->
+                <p>Avoid the onslaught. Use the arrow keys &lpar; &larr; &rarr; &rpar; and spacebar to survive.</p>
+                <form id="get-player-name">
+                    <div class="form-group">
+                        <label form="player-name">Player name</label>
+                        <input id="player-name" class="form-control validate-input" type="text" name="player-name"/>
+                        <small class="error hidden" aria-live="polite">&larr; You have to put in some kind of name.</small>
+                    </div>
+                </form>
+                <button id="begin" type="submit" form="get-player-name">Begin</button>
+            </div>
+        </div>
         <div id="gameboard-container">
             <div id="overlay">
                 <div class="topLine">
-                    <div class="elapsedTime">
-                        <p>1:45</p>
+                    <!-- <div class="elapsedTime"> -->
+                        <!-- am I going to make a timer? -->
+                        <!-- <p>Time 1:45</p> -->
+                    <!-- </div> -->
+                    <div id="player-name-display" class="player-name-display">Player 1</div>
+                    <div class="middle">
+                        <p class="narrower">Use &larr; &rarr; and spacebar to survive.</p>
+                        <button id="pause">Pause</button>
+                        <button id="endGame" class="hidden">End game</button>
                     </div>
                     <div class="points">
-                        <p>123,200 | Top score: 400,410</p>
+                        <!-- need to update the top score from local storage -->
+                        <p><span id="score">0</span> pts | Top score: <span id="top-score">&mdash;</span></p>
                     </div>
                 </div>
             </div>
-            <div id="gameBoard"></div>
-                <div class="protagonist"><img src="images/Protagonist1.png"></div>
+            <div id="gameBoard">
+                <div id="protagonist"><img src="images/Protagonist2.png"></div>
             </div>
         </div>
         <script src="artificial.js"></script>
