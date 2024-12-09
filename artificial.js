@@ -12,6 +12,7 @@ const playerName = document.getElementById('player-name');
 const playerNameDisplay = document.getElementById('player-name-display');
 const topScoreHandle = document.getElementById('top-score');
 
+
 // store some sounds
 const thud = new Audio('sounds/Thud.m4a');
 const ding = new Audio('sounds/GlassDing.m4a');
@@ -27,11 +28,6 @@ playerName.addEventListener('input', function() {
 // set a default value for player name in the form
 playerName.value = 'Player 1';
 playerNameDisplay.textContent = playerName.value;
-
-// develop this to use the protagonist getting hit to end the game
-let proObject = {
-    health: 2
-};
 
 // verify that there is a player name
 const validatePlayerName = (name) => {
@@ -177,7 +173,7 @@ const modalContents = [
 ];
 
 // what to do at the ending of the game
-function endGame() {
+function endGame(condition) {
     
     // stop the game
     gameState.isRunning = false;
@@ -185,46 +181,28 @@ function endGame() {
     // update top score if applicable
     gameState.updateTopScore();
 
-    setModalContent(modalContents[0]);
+    // map certain conditions to the contents of the modal
+    const mapOfResult = {
+        lose: 0,
+        win: 1,
+        quit: 2
+    }
+
+    // get the result index from the condition, with zero as default
+    const contentIndex = mapOfResult[condition] || 0;
+
+    // set the modal content
+    setModalContent(modalContents[contentIndex]);
 
     // open the dialog
     modal.classList.remove('hidden');
-    console.log('The game ended.');
 
+    // update the local records for the game
     updateGameRecords();
 
 };
 
-// // grab the try again button
-// const tryAgain = document.getElementById('try-again');
 
-// // what to do if try again gets clicked
-// tryAgain.addEventListener('click', function() {
-//     enemyCount = 0;
-//     score = 0;
-//     gameGo = true;
-    
-//     // prevent protagonist jumping
-//     pro.style.left = "400px";
-
-//     // put away the modal
-//     modal.classList.add('hidden');
-
-//     // change the buttons back
-//     endButton.classList.add('hidden');
-//     pauseButton.textContent = 'Pause';
-
-//     // get rid of the existing enemies
-//     const existingEnemies = document.querySelectorAll('.enemigo');
-//     existingEnemies.forEach(enemy => enemy.remove());
-
-//     // reset the score display
-//     scoreHolder.textContent = score;
-
-//     // start spawning enemies again
-//     startSpawningEnemies();
-    
-// });
 
 function updateGameRecords() {
     // get the current time
@@ -232,7 +210,7 @@ function updateGameRecords() {
     const nowPrettier = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
 
     // construct a game record of a single game
-    const gameRecord = new GameSession(playerName.value, nowPrettier, score);
+    const gameRecord = new GameSession(playerName.value, nowPrettier, gameState.score);
 
     // initialize the games list variable
     let gamesList;
@@ -318,13 +296,13 @@ function restartGame() {
     startSpawningEnemies();
 }
 
-
 endButton.addEventListener('click', function() {
-    endGame();
 
     // change what the modal says
     setModalContent(modalContents[2]);
-    modal.classList.add('hidden');
+    modal.classList.remove('hidden');
+
+    endGame('quit');
 
 });
 
@@ -352,9 +330,6 @@ class Enemy {
 // author an enemy instance of the class
 // here's where to change the enemy speed
 const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy 1.png' );
-
-// make sure it actually exists
-// console.log(enemyNo1);
 
 // define how far apart the enemy travel lanes will be and where the first line is
 const firstSlot = 20;
@@ -487,8 +462,10 @@ function moveDown(element, enemy) {
         };
         
         // if the protagonist health reaches zero end the game
-        if (gameState.protagonistHealth === 0 || document.querySelectorAll('.enemigo').length === 0) {
-            endGame()
+        // if (gameState.protagonistHealth === 0 || document.querySelectorAll('.enemigo').length === 0) {
+        if (gameState.protagonistHealth === 0) {
+            console.log('You lost.')
+            endGame('lose')
         };
     }, 50);
 };
@@ -582,12 +559,8 @@ function startSpawningEnemies() {
     spawnIntervalId = setInterval (() => {
 
         // only spawn if there aren't too many enemies already
-        // and if the game is not paused
-        if (!gameState.isRunning) {
-            return;
-        }
-
-        if (gameState.enemyCount < gameState.maximumEnemigos){
+        // and if the game is running (not paused)
+        if (gameState.isRunning && gameState.enemyCount < gameState.maximumEnemigos){
     
             // spawn enemies of type enemyNo1
             spawn(enemyNo1);
@@ -600,10 +573,13 @@ function startSpawningEnemies() {
 
             // stop spawning more enemies
             clearInterval(spawnIntervalId);
-            gameState.isRunning = false;
-            console.log('Maximum enemigos reached. Ending game shortly...')
+
+            // change what the modal says
+            modalBlock.innerHTML = modalContents[1];
             
-            // check every two seconds to see if all enemies are gone
+            console.log('Ending the game due to enemy exhaustion: win.')
+            
+            // check every eight seconds to see if all enemies are gone
             const checkForClearEnemies = setInterval(() => {
                 if(document.querySelectorAll('.enemigo').length === 0 && gameState.isRunning) {
 
@@ -611,14 +587,10 @@ function startSpawningEnemies() {
                     clearInterval(checkForClearEnemies);
 
                     // end the game
-                    endGame();
+                    endGame('win');
 
-                    // change what the modal says
-                    modalBlock.innerHTML = modalContents[1];
-
-                    console.log('Game ended because enemies were exhausted.')
                 }
-            }, 2000);
+            }, 8000);
         }
     }, 2000);
 };
