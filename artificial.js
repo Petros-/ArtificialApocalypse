@@ -365,8 +365,8 @@ class Enemy {
 
 // author an enemy instance of the class
 // here's where to change the enemy speed
-const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy1.png', 1, 10);
-const enemyNo2 = new Enemy('Yekimor', 5, 'images/Enemy2.png', 2, 20);
+const enemyNo1 = new Enemy('Blatherus', 3, 'images/Enemy1.png', 1, 10);
+const enemyNo2 = new Enemy('Yekimor', 4, 'images/Enemy2.png', 2, 20);
 const enemyNo3 = new Enemy('Bragamoor', 1, 'images/MegaBot.png', 10, 80);
 
 // define how far apart the enemy travel lanes will be and where the first line is
@@ -466,12 +466,12 @@ function spawn(enemy) {
         enemyImg.dataset.strength = enemy.strength;
         
         // fix the z-ordering so that new enemies are behind old ones
-        // if(enemy === enemyNo3) {
-        //     const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
-        //     enemyImg.style.zIndex = reversedZIndex;
-        // } else {
-        //     enemyImg.style.zIndex = 1;
-        // }
+        if(enemy === enemyNo3) {
+            const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
+            enemyImg.style.zIndex = reversedZIndex;
+        } else {
+            enemyImg.style.zIndex = 1;
+        }
 
         // Append the img to the game board
         gameBoard.appendChild(enemyImg);
@@ -642,15 +642,17 @@ function startSpawningEnemies() {
     
             // spawn enemies of type enemyNo1
             spawn(enemyNo1);
-
             gameState.enemyCount++;
-            console.log(`Enemy count: ${gameState.enemyCount}`);
+            gameState.enemyTypeCounts.enemyNo1++;
+
+            console.log(`Total enemies: ${gameState.enemyCount} enemyNo1: ${gameState.enemyTypeCounts.enemyNo1} enemyNo2: ${gameState.enemyTypeCounts.enemyNo2} enemyNo3: ${gameState.enemyTypeCounts.enemyNo3}`);
 
             setTimeout(() => {
                 if (gameState.enemyTypeCounts.enemyNo2 < gameState.maxEnemyTypeCounts.enemyNo2) {
                     spawn(enemyNo2);
                     gameState.enemyCount++;
-                    console.log(`Enemy count: ${gameState.enemyCount}`);
+                    gameState.enemyTypeCounts.enemyNo2++;
+                    // console.log(`Enemy count: ${gameState.enemyCount}`);
                 } 
             }, 8000);
 
@@ -658,9 +660,12 @@ function startSpawningEnemies() {
                 if (gameState.enemyTypeCounts.enemyNo3 < gameState.maxEnemyTypeCounts.enemyNo3) {
                     spawn(enemyNo3);
                     gameState.enemyCount++;
-                    console.log(`Enemy count: ${gameState.enemyCount}`);
+                    gameState.enemyTypeCounts.enemyNo3++;
+                    // console.log(`Enemy count: ${gameState.enemyCount}`);
                 } 
             }, 20000);
+
+            
         } 
 
         // if there are no more enemies end the game with a delay
@@ -685,8 +690,10 @@ function startSpawningEnemies() {
                     endGame('win');
 
                 }
-            }, 8000);
+                // wait 12 seconds before declaring a win
+            }, 12000);
         }
+        //spawn every two seconds
     }, 2000);
 };
 

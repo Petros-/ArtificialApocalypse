@@ -52,6 +52,7 @@ body {
     align-items: stretch;
     gap: 0;
     height: 60px;
+    z-index: 500;
 }
 
 .elapsedTime, .points, .middle, .player-name-display {
