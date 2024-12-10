@@ -435,6 +435,8 @@ document.addEventListener('keydown', (event) => {
     
 });
 
+// set a z-index which I decrement down from
+let modifiedZIndex = 100;
 
 // create a function to spawn an individual enemy
 function spawn(enemy) {
@@ -453,7 +455,7 @@ function spawn(enemy) {
 
         // pick a slot at random and put the spawn location there
         const xPosition = slots[Math.floor(Math.random() * slots.length)] + 'px';
-        
+
         // Create an img element dynamically
         const enemyImg = document.createElement("img");
         enemyImg.src = enemy.image;
@@ -464,14 +466,7 @@ function spawn(enemy) {
         enemyImg.classList.add('enemigo');
         enemyImg.dataset.bounty = enemy.bounty;
         enemyImg.dataset.strength = enemy.strength;
-        
-        // fix the z-ordering so that new enemies are behind old ones
-        if(enemy === enemyNo3) {
-            const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
-            enemyImg.style.zIndex = reversedZIndex;
-        } else {
-            enemyImg.style.zIndex = 1;
-        }
+        enemyImg.style.zIndex = modifiedZIndex;
 
         // Append the img to the game board
         gameBoard.appendChild(enemyImg);
@@ -658,7 +653,9 @@ function startSpawningEnemies() {
 
             setTimeout(() => {
                 if (gameState.enemyTypeCounts.enemyNo3 < gameState.maxEnemyTypeCounts.enemyNo3) {
+    
                     spawn(enemyNo3);
+                    modifiedZIndex--;
                     gameState.enemyCount++;
                     gameState.enemyTypeCounts.enemyNo3++;
                     // console.log(`Enemy count: ${gameState.enemyCount}`);
