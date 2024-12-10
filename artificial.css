@@ -61,14 +61,14 @@ body {
 
 .elapsedTime, .points, .player-name-display  {
     flex: 0 0 auto;
-    min-width: 180px;
+    min-width: 240px;
     display:flex;
     justify-content: center;
     align-items: center;
 }
 
 .elapsedTime, .player-name-display  {
-    
+    color: white;
     background-color: magenta;
     /* padding: 4px 20px; */
 }

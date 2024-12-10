@@ -16,7 +16,9 @@ const topScoreHandle = document.getElementById('top-score');
 // store some sounds
 const thud = new Audio('sounds/Thud.m4a');
 const ding = new Audio('sounds/GlassDing.m4a');
+ding.playbackRate = 2;
 const paperCrush = new Audio('sounds/PaperWaste.m4a');
+paperCrush.playbackRate = 2;
 const flutter = new Audio('sounds/Flutter.m4a');
 const pop = new Audio('sounds/Pop1short.m4a');
 
@@ -56,9 +58,24 @@ class GameState {
         this.score = 0;
         this.protagonistHealth = 2;
         this.enemyCount = 0;
-        this.maximumEnemigos = 20;
+        this.maximumEnemigos = 45;
         this.topScore = 0;
+        
+        // create counters for each enemy by type
+        this.enemyTypeCounts = {
+            enemyNo1: 0,
+            enemyNo2: 0,
+            enemyNo3: 0
+        };
+        
+        // control spawning amounts for each enemy
+        this.maxEnemyTypeCounts = {
+            enemyNo1: 25,
+            enemyNo2: 15,
+            enemyNo3: 5,
+        };
     }
+
 
     // reset the game state
     reset() {
@@ -66,6 +83,11 @@ class GameState {
         this.score = 0;
         this.protagonistHealth = 2;
         this.enemyCount = 0;
+        this.enemyTypeCounts = {
+            enemyNo1: 0,
+            enemyNo2: 0,
+            enemyNo3: 0
+        };
         // this.maximumEnemigos = 5;
     }
 
@@ -336,16 +358,16 @@ class Enemy {
         // this will be how many shots it takes to kill the enemy
         this.strength = strength;
 
-        // set a bounty on each enemy
+        // set a bounty on each enemy; how many points for killing
         this.bounty = bounty;
     }
 }
 
 // author an enemy instance of the class
 // here's where to change the enemy speed
-const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy1.png' );
-const enemyNo2 = new Enemy('Yekimor', 5, 'images/Enemy2.png', 2);
-const enemyNo3 = new Enemy('Bragamoor', 1, 'images/MegaBot.png', 10);
+const enemyNo1 = new Enemy('Blatherus', 4, 'images/Enemy1.png', 1, 10);
+const enemyNo2 = new Enemy('Yekimor', 5, 'images/Enemy2.png', 2, 20);
+const enemyNo3 = new Enemy('Bragamoor', 1, 'images/MegaBot.png', 10, 80);
 
 // define how far apart the enemy travel lanes will be and where the first line is
 const firstSlot = 20;
@@ -405,7 +427,7 @@ document.addEventListener('keydown', (event) => {
     switch (event.key) {
         case ' ':
             shoot(pro);
-            console.log('shots fired!')
+            // console.log('shots fired!')
             break;
         default:
             break;
@@ -416,6 +438,15 @@ document.addEventListener('keydown', (event) => {
 
 // create a function to spawn an individual enemy
 function spawn(enemy) {
+
+    const enemyType = enemy.name.toLowerCase();
+    const enemyCounter = `enemyNo${enemyType[enemyType.length - 1]}`;
+
+    // check if the limit for the enemy type has been reached
+    if (gameState.enemyTypeCounts[enemyCounter] >= gameState.maxEnemyTypeCounts[enemyCounter]) {
+        console.log(`Enemy limit reached for ${enemy.name}`);
+        return;
+    }
 
     // only spawn and move if the game is not paused
     if (gameState.isRunning) {
@@ -435,18 +466,22 @@ function spawn(enemy) {
         enemyImg.dataset.strength = enemy.strength;
         
         // fix the z-ordering so that new enemies are behind old ones
-        if(enemy === enemyNo3) {
-            const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
-            enemyImg.style.zIndex = reversedZIndex;
-        } else {
-            enemyImg.style.zIndex = 1;
-        }
+        // if(enemy === enemyNo3) {
+        //     const reversedZIndex = gameState.maximumEnemigos - gameState.enemyCount;
+        //     enemyImg.style.zIndex = reversedZIndex;
+        // } else {
+        //     enemyImg.style.zIndex = 1;
+        // }
 
         // Append the img to the game board
         gameBoard.appendChild(enemyImg);
+
+        // Increment the spawn counter for the enemy type
+        // console.log(`Spawned ${enemy.name}: ${gameState.enemyTypeCounts[enemyCounter]} total`);
         
         // make the image move downwards
         moveDown(enemyImg, enemy);
+
     }
 
 };
@@ -459,10 +494,10 @@ function moveDown(element, enemy) {
     const moveInterval = setInterval(() => {
         if (!gameState.isRunning) {
             return;
-        } else {
-            yPosition += enemy.speed;
-            element.style.top = yPosition + 'px';
-        }
+        } 
+        
+        yPosition += enemy.speed;
+        element.style.top = `${yPosition}px`;
 
         const gameBoardHeight = gameBoard.offsetHeight;
 
@@ -470,13 +505,18 @@ function moveDown(element, enemy) {
         if (yPosition > gameBoardHeight - element.offsetHeight) {
             clearInterval(moveInterval);
             element.remove();
+
+            // decrement the enemy count
+            // const enemyType = enemy.name.toLowerCase();
+            // const enemyCounter = `enemyNo${enemyType[enemyType.length - 1]}`;
+            // gameState.enemyTypeCounts[enemyCounter]--;
             
         }
 
         // do collision detection
         if (detectCollision(pro, element)) {
 
-            console.log('Collided! with enemy type:', enemy.name);
+            // console.log('Collided! with enemy type:', enemy.name);
             protagonist.classList.add('danger');
             thud.play();
             clearInterval(moveInterval);
@@ -551,7 +591,7 @@ function shoot(shooter) {
         // do collision detection on all enemies
         enemies.forEach(enemy => {
             if (detectCollision(projectile, enemy)) {
-                console.log('Hit:', enemy.alt);
+                // console.log('Hit:', enemy.alt);
 
                 // play the ding sound
                 
@@ -602,12 +642,25 @@ function startSpawningEnemies() {
     
             // spawn enemies of type enemyNo1
             spawn(enemyNo1);
+
             gameState.enemyCount++;
             console.log(`Enemy count: ${gameState.enemyCount}`);
 
-            setTimeout(spawn, 15000, enemyNo2);
+            setTimeout(() => {
+                if (gameState.enemyTypeCounts.enemyNo2 < gameState.maxEnemyTypeCounts.enemyNo2) {
+                    spawn(enemyNo2);
+                    gameState.enemyCount++;
+                    console.log(`Enemy count: ${gameState.enemyCount}`);
+                } 
+            }, 8000);
 
-            setTimeout(spawn, 30000, enemyNo3)
+            setTimeout(() => {
+                if (gameState.enemyTypeCounts.enemyNo3 < gameState.maxEnemyTypeCounts.enemyNo3) {
+                    spawn(enemyNo3);
+                    gameState.enemyCount++;
+                    console.log(`Enemy count: ${gameState.enemyCount}`);
+                } 
+            }, 20000);
         } 
 
         // if there are no more enemies end the game with a delay
