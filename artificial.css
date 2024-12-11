@@ -16,6 +16,7 @@ body {
     height: 640px;
     width: 1024px;
     display: flex;
+    background-image: url('images/WavyBackground.png');
     background-color: cyan;
     position: relative;
 }
