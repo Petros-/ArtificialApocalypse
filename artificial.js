@@ -48,6 +48,12 @@ const validatePlayerName = (name) => {
     
 };
 
+// *****************************************
+//
+// Control the game state
+//
+// -----------------------------------------
+
 class GameState {
     constructor() {
 
@@ -102,6 +108,12 @@ class GameState {
 // instantiate the game state
 const gameState = new GameState();
 
+// *****************************************
+//
+// Control button based interactions
+//
+// -----------------------------------------
+
 // start the game at the press of the button
 beginButton.addEventListener('click', function(event) {
 
@@ -131,7 +143,7 @@ beginButton.addEventListener('click', function(event) {
 pauseButton.addEventListener('click', function() {
 
     // pause the game
-    gameState.isRunning = false;
+    gameState.isRunning = !gameState.isRunning;
 
      // create a toggle that changes what buttons say and do
      if (gameState.isRunning) {
@@ -139,12 +151,18 @@ pauseButton.addEventListener('click', function() {
         // resume the game
         endButton.classList.add('hidden');
         pauseButton.textContent = 'Pause';
+
+        // start spawning enemies again
+        startSpawningEnemies(); 
         
     } else {
 
         // pause the game
         endButton.classList.remove('hidden');
         pauseButton.textContent = 'Resume';
+
+        // stop enemy spawning
+        clearInterval(spawnIntervalId);
     }
 
     // console.log('Game is running? ', gameState.isRunning);
@@ -171,6 +189,12 @@ class GameSession {
         this.score = gameEndScore;
     }
 };
+
+// *****************************************
+//
+// Modal content control
+//
+// -----------------------------------------
 
 const modalContents = [
     `
@@ -342,6 +366,12 @@ endButton.addEventListener('click', function() {
 
 });
 
+// *****************************************
+//
+// Enemy variables
+//
+// -----------------------------------------
+
 // create a class for enemies
 class Enemy {
 
@@ -372,6 +402,12 @@ const enemyNo3 = new Enemy('Bragamoor', 1, 'images/MegaBot.png', 10, 80);
 // define how far apart the enemy travel lanes will be and where the first line is
 const firstSlot = 20;
 const slotIncrement = 100;
+
+// *****************************************
+//
+// Gameboard control and layout
+//
+// -----------------------------------------
 
 // define the slots for where to spawn an enemy
 const slots = [
@@ -437,6 +473,12 @@ document.addEventListener('keydown', (event) => {
 
 // set a z-index which I decrement down from
 let modifiedZIndex = 100;
+
+// *****************************************
+//
+// Enemy spawning grounds
+//
+// -----------------------------------------
 
 // create a function to spawn an individual enemy
 function spawn(enemy) {
@@ -619,6 +661,12 @@ function shoot(shooter) {
 
 // create a controller or id for managing overall spawning
 let spawnIntervalId;
+
+// *****************************************
+//
+// Here's where the spawning is 
+//
+// -----------------------------------------
 
 // spawn a new enemy every so often
 // currently set to every two seconds (2000ms)
