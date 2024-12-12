@@ -523,6 +523,22 @@ function spawn(enemy) {
 
 };
 
+// make a function to show contact with bullets etc.
+function blink(somethingToBlink) {
+    somethingToBlink.style.opacity = 1;
+
+    setTimeout(() => {
+        somethingToBlink.style.transition = 'opacity 0.2s';
+        somethingToBlink.style.opacity = 0.5;
+        setTimeout(() => {
+            somethingToBlink.style.opacity = 1;
+        }, 200);
+
+        // this number controls any delay before the blink
+    }, 20);
+
+}
+
 // define the downward movement for enemies
 function moveDown(element, enemy) {
     let yPosition = 0;
@@ -557,6 +573,7 @@ function moveDown(element, enemy) {
             protagonist.classList.add('danger');
             thud.play();
             clearInterval(moveInterval);
+            blink(pro);
             element.remove();
              
             gameState.protagonistHealth -= 1;
@@ -594,44 +611,43 @@ function shoot(shooter) {
     // create a projectile
     const projectile = document.createElement('div');
 
-    // create an collection of enemies
-    const enemies = document.querySelectorAll('.enemigo');
-
     // add the bullet class to it
     projectile.classList.add('bullet');
-
-    // edit this sound if you're going to actually use it
-    // pop.play();
-
+    
     // generate rectangles from the elements
     const shooterRect = shooter.getBoundingClientRect();
     const gameBoardRect = gameBoard.getBoundingClientRect();
-
+    
     // position it just right horizontally and vertically
     projectile.style.left = `${shooterRect.left - gameBoardRect.left + shooterRect.width / 2 - 6}px`;
     projectile.style.bottom = `${gameBoardRect.bottom - shooterRect.top}px`;
+
     
     // actually put the projectile on the gameboard
     gameBoard.appendChild(projectile);
-
+    
     // Animate the projectile upwards
     let projectileBottom = parseInt(projectile.style.bottom);
     const moveInterval = setInterval(() => {
         projectileBottom += 10;
         projectile.style.bottom = `${projectileBottom}px`;
-
+        
         // Remove the projectile if it goes out of bounds
         if (projectileBottom > gameBoard.offsetHeight - 8) {
             clearInterval(moveInterval);
             projectile.remove();
+            return;
         }
+
+        // create an collection of enemies
+        const enemies = document.querySelectorAll('.enemigo');
+
         // do collision detection on all enemies
         enemies.forEach(enemy => {
             if (detectCollision(projectile, enemy)) {
-                // console.log('Hit:', enemy.alt);
 
-                // play the ding sound
-                
+                // for troubleshooting
+                // console.log('Hit:', enemy.alt);
                 
                 // increment the score upwards
                 gameState.score = gameState.score + parseInt(enemy.dataset.bounty);
@@ -641,6 +657,9 @@ function shoot(shooter) {
 
                 // take 1 away from the enemy's strength
                 enemy.dataset.strength --;
+
+                // blink the enemy
+                blink(enemy);
 
                 // sound control
                 if (enemy.dataset.strength >= 1) {
