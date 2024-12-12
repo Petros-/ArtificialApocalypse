@@ -15,12 +15,13 @@ const topScoreHandle = document.getElementById('top-score');
 
 // store some sounds
 const thud = new Audio('sounds/Thud.m4a');
-const ding = new Audio('sounds/GlassDing.m4a');
-ding.playbackRate = 2;
-const paperCrush = new Audio('sounds/PaperWaste.m4a');
+const ding = new Audio('sounds/GlassDing.mp3');
+ding.playbackRate = 1;
+const paperCrush = new Audio('sounds/PaperWaste.mp3');
 paperCrush.playbackRate = 2;
 const flutter = new Audio('sounds/Flutter.m4a');
-const pop = new Audio('sounds/Pop1short.m4a');
+const winSound = new Audio('sounds/ClongWin.mp3');
+const pop = new Audio('sounds/Pop1short.mp3');
 
 // Form stuff
 // update the name when the field gets changed
@@ -613,6 +614,9 @@ function shoot(shooter) {
 
     // add the bullet class to it
     projectile.classList.add('bullet');
+
+    // play the pop sound
+    pop.play();
     
     // generate rectangles from the elements
     const shooterRect = shooter.getBoundingClientRect();
@@ -753,9 +757,12 @@ function startSpawningEnemies() {
                     // end the game
                     endGame('win');
 
+                    // play the win sound
+                    winSound.play();
+
                 }
                 // wait 12 seconds before declaring a win
-            }, 12000);
+            }, 8000);
         }
         //spawn every two seconds
     }, 2000);
